@@ -1,0 +1,2 @@
+2020-02-21 19:13:51.497|00013436|
+C:\build\aria-cpp-v1\clienttelemetry\src\LogManagerImpl.cpp(626): class Microsoft::Applications::Telemetry::ILogger *__thiscall Microsoft::Applications::Telemetry::LogManagerImpl::Initialize(const class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > &,const struct Microsoft::Applications::Telemetry::LogConfiguration &) WARNING: Invalid in-ram queue size (20971520), adjusted to max ram queue size

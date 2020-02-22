@@ -1,0 +1,34 @@
+Short Description
+OneDrive Module FileSyncHelper.exe improperly handles C:\Windows\Temp\aria-debug-{pid}.log file leads to Arbitrary File overwrite.
+
+Vulnerability type
+Elevation of privilege
+
+Platform
+Tested on Windows 10, Version 1909.18363.628.
+
+Summary
+OneDrive Module FileSyncHelper.exe is the command line tool for Microsoft OneDrive Application file syncing functionality. 
+It will be triggered to run as SYSTEM privilege account when OneDrive filesync procedure is triggered. 
+When the command line runs, it will create/overwrite C:\Windows\Temp\aria-debug-{pid}.log using its process id.
+
+Description
+The file write op to C:\Windows\TEMP\aria-debug-{pid}.log doesn't include any kind of check for the target file, 
+thus a standard user can turn the file into hardlink to achieve arbitrary file overwrite. The only problem here 
+is the prediction of pid. The pid can be acquired by setting an opportunistic lock on files FileSyncHelper.exe 
+will access before it write contents into C:\Windows\TEMP\aria-debug-{pid}.log, here for demonstration, the poc creates
+1000 target files under C:\test, then set 1000 hardlinks from C:\Windows\TEMP\aria-debug-{number}.log pointing at them.
+The number 1000 can be increased to cover all possible pid range.
+
+Steps to Reproduce
+1. execute run.bat as normal user
+2. trigger FileSyncHelper.exe to run as SYSTEM by hand or wait until OneDrive's filesync operation begins
+
+Expected Result:
+Files under C:\test remains unchanged.
+
+Actual Result:
+One of the target file under C:\test is overwritten.
+
+Acknowledgement
+Zhiniang Peng (@edwardzpeng) of Qihoo 360 Core security and Fangming Gu (@afang5472)

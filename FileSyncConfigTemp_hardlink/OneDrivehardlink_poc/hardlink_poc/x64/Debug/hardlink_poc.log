@@ -1,0 +1,16 @@
+﻿cl : 命令行 warning D9025: 正在重写“/sdl”(用“/GS-”)
+  CommonUtils.cpp
+  FileOpLock.cpp
+  Hardlink.cpp
+C:\Users\fangminggu\Desktop\Publish\hardlink_poc\hardlink_poc\Hardlink.cpp(29,33): warning C4267: “=”: 从“size_t”转换到“ULONG”，可能丢失数据
+C:\Users\fangminggu\Desktop\Publish\hardlink_poc\hardlink_poc\Hardlink.cpp(39,110): warning C4267: “参数”: 从“size_t”转换到“ULONG”，可能丢失数据
+  main.cpp
+  NativeSymlink.cpp
+  ReparsePoint.cpp
+C:\Users\fangminggu\Desktop\Publish\hardlink_poc\hardlink_poc\ReparsePoint.cpp(105,66): warning C4267: “参数”: 从“size_t”转换到“DWORD”，可能丢失数据
+C:\Users\fangminggu\Desktop\Publish\hardlink_poc\hardlink_poc\ReparsePoint.cpp(276,1): warning C4267: “参数”: 从“size_t”转换到“DWORD”，可能丢失数据
+C:\Users\fangminggu\Desktop\Publish\hardlink_poc\hardlink_poc\ReparsePoint.cpp(326,129): warning C4267: “参数”: 从“size_t”转换到“DWORD”，可能丢失数据
+  ScopedHandle.cpp
+  stdafx.cpp
+  正在生成代码...
+  hardlink_poc.vcxproj -> C:\Users\fangminggu\Desktop\Publish\hardlink_poc\x64\Debug\hardlink_poc.exe

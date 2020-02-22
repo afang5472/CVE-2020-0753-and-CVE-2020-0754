@@ -1,0 +1,44 @@
+Short Description
+Missing file type check in shell32.dll::SHGetSetFolderCustomSettings file operations leading to Arbitrary File overwrite.(LibraryIssue)
+
+Vulnerability type
+Elevation of privilege
+
+Platform
+Tested on Windows 10, Version 1909.18363.628, also work in Windows Insider Preview Build 19551.
+
+Summary
+shell32.dll::SHGetSetFolderCustomSettings is a system-provided api for setting or retrieving custom folder settings. 
+This function reads from and writes to Desktop.ini. Among the api's operation, the invoker will try to create or 
+overwrite a desktop.ini file in parameter-specified directory. The problem is this api lacks of checking whether the 
+supplied directory is a junction or not, thus if a privileged system service uses this api to write desktop.ini in a 
+user-controled place, a standard user can turn the target desktop.ini into a symbolic link, leading to arbitrary file
+overwrite. An exploitable example is FileSyncHelper.exe, a module in Microsoft OneDrive service.
+
+Description
+When there's needs for file sync in onedrive service, the FileSyncConfig.exe will be invoked as SYSTEM privilege process.
+Command line: "C:\Program Files (x86)\Microsoft OneDrive\19.222.1110.0006\FileSyncConfig.exe /allusers", during each run of this process, 
+it will load shell32.dll, create/write a desktop.ini file using shell32.dll::SHGetSetFolderCustomSettings under %USERPROFILE%\OneDrive.
+The path %USERPROFILE%\OneDrive is the default path for OneDrive directory. This operation is affected due to the file overwrite issue in
+shell32.dll::SHGetSetFolderCustomSettings, a normal user can initialize a OneDrive with a temporary account, stop the OneDrive.exe, then empty
+%USERPROFILE%\OneDrive and turn it into a junction to \RPC\Control, pointing desktop.ini at places where he wants to overwrite. And just wait 
+for FileSyncConfig.exe is triggered, the target file will be overwritten with desktop.ini file content.
+
+Steps to Reproduce
+1. Initialize an OneDrive account as a normal user
+2. execute run.bat as normal user.
+3. Trigger FileSyncConfig.exe to run as SYSTEM manually or wait for it to be triggered.
+
+Expected Result:
+Files under C:\test\test.txt remains unchanged.
+
+Actual Result:
+Target file under C:\test is overwritten.
+
+Additional information:
+According to analyze, the issue exists in shell32.dll::SHGetSetFolderCustomSettings's implementation and it's not relevant with 
+FileSyncConfig.exe, if any other privileged process uses SHGetSetFolderCustomSettings at controlable place, the bug will affect 
+that service as well. We also supplied PML file(procmon.exe trace) to help you to analyze with that.
+
+Acknowledgement
+Zhiniang Peng (@edwardzpeng) of Qihoo 360 Core security and Fangming Gu (@afang5472)

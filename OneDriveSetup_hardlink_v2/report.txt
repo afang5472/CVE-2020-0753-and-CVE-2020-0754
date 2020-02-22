@@ -1,0 +1,35 @@
+Short Description
+OneDriveSetup.exe improperly handles C:\ProgramData\Microsoft OneDrive\setup\logs\Install-{date}.{hour}.{pid}.1.aodl file leads to Arbitrary File overwrite.
+
+Vulnerability type
+Elevation of privilege
+
+Platform
+Tested on Windows 10, Version 1909.18363.628.
+
+Summary
+OneDriveSetup.exe is the command line tool for setting up Microsoft OneDrive Application. 
+It will be triggered to run as SYSTEM privilege account when OneDrive performs the setup procedure.
+Command Line: "C:\Program Files (x86)\Microsoft OneDrive\19.222.1110.0006\OneDriveSetup.exe" /update /restart /allusers /updateSource:ODSU
+When the command line runs, it will create/overwrite C:\ProgramData\Microsoft OneDrive\setup\logs\Install-{date}.{hour}.{pid}.1.aodl using its process id.
+
+Description
+The file write op to C:\ProgramData\Microsoft OneDrive\setup\logs\Install-{date}.{hour}.{pid}.1.aodl doesn't include any kind of check for the target file, 
+thus a standard user can turn the file into hardlink to achieve arbitrary file overwrite. The only problem here 
+is the prediction of pid. The pid can be acquired by setting an opportunistic lock on files OneDriveSetup.exe 
+will access before it write contents into C:\ProgramData\Microsoft OneDrive\setup\logs\Install-{date}.{hour}.{pid}.1.aodl, here for demonstration, the poc creates
+1000 target files under C:\test, then set 1000 hardlinks from C:\ProgramData\Microsoft OneDrive\setup\logs\Install-{date}.{hour}.{pid}.1.aodl pointing at them.
+The number 1000 can be increased to cover all possible pid range.
+
+Steps to Reproduce
+1. execute run.bat as normal user
+2. trigger OneDriveSetup.exe to run as SYSTEM by hand or wait until OneDrive's update
+
+Expected Result:
+Files under C:\test remains unchanged.
+
+Actual Result:
+One of the target file under C:\test is overwritten.
+
+Acknowledgement
+Zhiniang Peng (@edwardzpeng) of Qihoo 360 Core security and Fangming Gu (@afang5472)
